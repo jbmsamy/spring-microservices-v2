@@ -1,0 +1,35 @@
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: "2023-12-14T05:17:50Z"
+  finalizers:
+  - service.kubernetes.io/load-balancer-cleanup
+  labels:
+    app: currency-conversion
+  name: currency-conversion
+  namespace: default
+  resourceVersion: "3931"
+  uid: 075bb42e-ff6c-41aa-a58a-c2a4620aba32
+spec:
+  allocateLoadBalancerNodePorts: true
+  clusterIP: 10.100.116.83
+  clusterIPs:
+  - 10.100.116.83
+  externalTrafficPolicy: Cluster
+  internalTrafficPolicy: Cluster
+  ipFamilies:
+  - IPv4
+  ipFamilyPolicy: SingleStack
+  ports:
+  - nodePort: 32357
+    port: 8100
+    protocol: TCP
+    targetPort: 8100
+  selector:
+    app: currency-conversion
+  sessionAffinity: None
+  type: LoadBalancer
+status:
+  loadBalancer:
+    ingress:
+    - hostname: a075bb42eff6c41aaa58ac2a4620aba3-1532755012.ap-south-1.elb.amazonaws.com
