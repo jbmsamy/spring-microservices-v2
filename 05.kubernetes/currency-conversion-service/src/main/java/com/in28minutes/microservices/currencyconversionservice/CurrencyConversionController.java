@@ -1,11 +1,13 @@
 package com.in28minutes.microservices.currencyconversionservice;
 
-import java.math.BigDecimal;
+import java.math
+.BigDecimal;
 import java.util.HashMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,22 +22,26 @@ public class CurrencyConversionController {
 	@Autowired
 	private CurrencyExchangeProxy proxy;
 	
+	@Autowired
+	private Environment environment;
+	
 	@GetMapping("/currency-conversion/from/{from}/to/{to}/quantity/{quantity}")
 	public CurrencyConversion calculateCurrencyConversion(
 			@PathVariable String from,
 			@PathVariable String to,
 			@PathVariable BigDecimal quantity
 			) {
-		
+
+		String currency_exchange_host = this.environment.getProperty("CURRENCY_EXCHANGE_URI");
 		//CHANGE-KUBERNETES
-		logger.info("calculateCurrencyConversion called with {} to {} with {}", from, to, quantity);
+		logger.info("calculateCurrencyConversion called with {} to {} with {} currency-exchange-host {}", from, to, quantity,currency_exchange_host);
 		
 		HashMap<String, String> uriVariables = new HashMap<>();
 		uriVariables.put("from",from);
 		uriVariables.put("to",to);
-		
+	
 		ResponseEntity<CurrencyConversion> responseEntity = new RestTemplate().getForEntity
-		("http://" + CurrencyExchangeProxy.EXCHANGE_SERVICE + ":8000/currency-exchange/from/{from}/to/{to}", 
+		("http://" + currency_exchange_host + ":8000/currency-exchange/from/{from}/to/{to}", 
 				CurrencyConversion.class, uriVariables);
 		
 		CurrencyConversion currencyConversion = responseEntity.getBody();
